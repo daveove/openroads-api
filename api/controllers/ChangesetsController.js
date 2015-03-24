@@ -201,6 +201,7 @@ module.exports = {
               action.action = 'create'
             }
           })
+          console.log(actions)
 
           // sails.log.verbose('\n\n\n', action);
           if (action.action === 'create' ) {
@@ -255,7 +256,7 @@ module.exports = {
             var updateTable = function() { return transaction(oldTable)
             .insert(oldEntity)
             .then(function() {
-
+              console.log('in update')
               return transaction(currentTable)
               .where(action.key, '=', action.id)
               .update(attributes)
@@ -269,19 +270,20 @@ module.exports = {
               throw new Error(err)
             }) } 
 
-            if (model === 'node' || 'way') {
+            if (model === 'node' || model === 'way') {
               return transaction('current_' + model + '_tags').where(model + '_id', '=', action.id).delete()
                 .then(function() {
-                  if (model == 'way') {
-                    var updateTable = function() { return transaction(currentTable)
-                            .where(action.key, '=', action.id)
-                            .update(attributes) }
-
+                  if (model === 'way') {
+                  
                     //Delete way_nodes 
                     return transaction('current_way_nodes').where('way_id', '=', action.id).delete()
-                            .then(updateTable)
+                            .then(function() { return transaction(currentTable)
+                            .where(action.key, '=', action.id)
+                            .update(attributes) })
                   } else {
-                    return updateTable;
+                    return transaction(currentTable)
+                            .where(action.key, '=', action.id)
+                            .update(attributes)
                   }
                 }) 
             } else {
@@ -296,6 +298,7 @@ module.exports = {
 
               .then(function(yes) {
                 if (yes) {
+                  attributes.visible = false;
                   //We need to delete all associations 
                   // Put in history
 
@@ -303,15 +306,18 @@ module.exports = {
                   return transaction('current_' + model + '_tags').where(model + '_id', '=', action.id).delete()
                   .then(function() {
                     if (model == 'way') {
-                      var updateTable = transaction(currentTable)
-                              .where(action.key, '=', action.id)
-                              .update(attributes)
 
                       //Delete way_nodes 
                       return transaction('current_way_nodes').where('way_id', '=', action.id).delete()
-                              .then(updateTable)
+                              .then(function() { 
+                                return transaction(currentTable)
+                                      .where(action.key, '=', action.id)
+                                      .update(attributes) 
+                                    })
                     } else {
-                      return updateTable
+                      return transaction(currentTable)
+                              .where(action.key, '=', action.id)
+                              .update(attributes)
                     }
                   })
                 }
