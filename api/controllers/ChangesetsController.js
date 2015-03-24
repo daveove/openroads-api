@@ -201,7 +201,6 @@ module.exports = {
               action.action = 'create'
             }
           })
-          console.log(actions)
 
           // sails.log.verbose('\n\n\n', action);
           if (action.action === 'create' ) {
