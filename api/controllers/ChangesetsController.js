@@ -190,6 +190,18 @@ module.exports = {
 
           numChanges += 1;
 
+          // We will delete all the way_nodes and entity_tags in a modify block
+          // A modify for a way node or entity tag becomes a create
+          // TODO: How to deal with history?
+          _.each(actions, function(action) {
+            if ((action.model === 'node_tag' ||
+                action.model === 'way_tag' ||
+                action.model === 'way_node') &&
+                action.action === 'modify') {
+              action.action = 'create'
+            }
+          })
+
           // sails.log.verbose('\n\n\n', action);
           if (action.action === 'create' ) {
 
@@ -218,7 +230,7 @@ module.exports = {
             }
 
           } else if (action.action === 'modify') {
-            console.log(model);
+
 
             // Save the original entity in the old entity (nodes, ways, etc) tables.
 
@@ -236,18 +248,14 @@ module.exports = {
               });
             }
 
-            if (model === 'way_node') {
-              action.id = attributes.node_id;
-            }
 
             var oldEntity = newOldEntity[model](action);
 
             // Create the old entity, if it fails, throw an error
-            return transaction(oldTable)
+            var updateTable = function() { return transaction(oldTable)
             .insert(oldEntity)
             .then(function() {
 
-              console.log(action);
               return transaction(currentTable)
               .where(action.key, '=', action.id)
               .update(attributes)
@@ -256,27 +264,59 @@ module.exports = {
                 sails.log.debug(err);
               });
             })
-
             .catch(function(err) {
               sails.log.debug(err)
               throw new Error(err)
-            })
+            }) } 
+
+            if (model === 'node' || 'way') {
+              return transaction('current_' + model + '_tags').where(model + '_id', '=', action.id).delete()
+                .then(function() {
+                  if (model == 'way') {
+                    var updateTable = function() { return transaction(currentTable)
+                            .where(action.key, '=', action.id)
+                            .update(attributes) }
+
+                    //Delete way_nodes 
+                    return transaction('current_way_nodes').where('way_id', '=', action.id).delete()
+                            .then(updateTable)
+                  } else {
+                    return updateTable;
+                  }
+                }) 
+            } else {
+              return updateTable;
+            }
           }
 
           else if (action.action === 'delete') {
-
-            sails.log.debug('\n\n', 'delete', action);
-
+ 
             if (model === 'node' || model === 'way') {
               return currentModels[model].canBeDeleted(action.id)
 
               .then(function(yes) {
                 if (yes) {
-                  attributes.visible = false;
-                  return transaction(currentTable)
-                  .where(action.key, '=', action.id)
-                  .update(attributes);
-                } else {
+                  //We need to delete all associations 
+                  // Put in history
+
+                  // Delete tags
+                  return transaction('current_' + model + '_tags').where(model + '_id', '=', action.id).delete()
+                  .then(function() {
+                    if (model == 'way') {
+                      var updateTable = transaction(currentTable)
+                              .where(action.key, '=', action.id)
+                              .update(attributes)
+
+                      //Delete way_nodes 
+                      return transaction('current_way_nodes').where('way_id', '=', action.id).delete()
+                              .then(updateTable)
+                    } else {
+                      return updateTable
+                    }
+                  })
+                }
+
+                else {
                   sails.log.debug("Couldn't delete entity");
                   throw new Error("Couldn't delete entity");
                 }

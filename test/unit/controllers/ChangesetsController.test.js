@@ -25,22 +25,21 @@ describe('ChangesetsController', function() {
   });
 
   describe('#upload',function() {
-    it('Creates 2 nodes and a way with 2 tags', function(done) {
+    it('Creates a node', function(done) {
       request(sails.hooks.http.app)
-        .post('/changesets/upload')
-        .set('Accept', 'application/json')
-        .query({'changeset_id': 1})
-        .send({'xmlString': mocks.createWay})
-        .expect(200)
-        .end(function(err, res) {
-          if (err) {
-            sails.log.debug(res.error.text)
-            return done(err)
-          }
-          //set the id for later tests;
-          id = parseInt(JSON.parse(res.text).actions[0].id)
-          done()
-        })
+      .post('/changesets/upload')
+      .set('Accept', 'application/json')
+      .query({'changeset_id': 1})
+      .send({'xmlString': mocks.createNode(-1)})
+      .expect(200)
+      .end(function(err, res) {
+        if (err) {
+          sails.log.debug(res.error.text)
+          return done(err)
+        }
+        id = parseInt(JSON.parse(res.text).actions[0].id)
+        done()
+      })
     });
 
     it('Modifies a node', function(done) {
@@ -65,6 +64,45 @@ describe('ChangesetsController', function() {
       .set('Accept', 'application/json')
       .query({'changeset_id': 1})
       .send({'xmlString': mocks.deleteNode(id)})
+      .expect(200)
+      .end(function(err, res) {
+        if (err) {
+          sails.log.debug(res.error.text)
+          return done(err)
+        }
+        done()
+      })
+    });
+
+    var node1, node2, node3, way;
+    it('Creates 3 nodes and a way with 2 tags', function(done) {
+      request(sails.hooks.http.app)
+        .post('/changesets/upload')
+        .set('Accept', 'application/json')
+        .query({'changeset_id': 1})
+        .send({'xmlString': mocks.createWay})
+        .expect(200)
+        .end(function(err, res) {
+          if (err) {
+            sails.log.debug(res.error.text)
+            return done(err)
+          }
+          //set the ids for later tests;
+          var retActions = JSON.parse(res.text).actions
+          node1 = parseInt(retActions[0].id)
+          node2 = parseInt(retActions[1].id)
+          node3 = parseInt(retActions[2].id)
+          way = parseInt(retActions[3].id)
+          done()
+        })
+    });
+
+    it('Modifies a way', function(done) {
+      request(sails.hooks.http.app)
+      .post('/changesets/upload')
+      .set('Accept', 'applications/json')
+      .query({'changeset_id': 1})
+      .send({'xmlString': mocks.modifyWay(node1, node2, node3, way)})
       .expect(200)
       .end(function(err, res) {
         if (err) {
