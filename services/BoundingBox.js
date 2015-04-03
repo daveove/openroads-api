@@ -12,10 +12,11 @@ var latLimit = 90.0;
 // In OSM, the order goes min_lon, min_lat, max_lon, max_lat.
 // All bounding box checks assume the input is unscaled.
 function Bbox(minMaxLatLon) {
-    function isValidBounds(bounds) {
+  function isValidBounds(bounds) {
+    if(bounds.length !== 4) return false;
     for(var i = 0; i < 4; ++i) {
       var coord = bounds[i];
-      if (!coord || isNaN(coord)) {
+      if (typeof coord === 'undefined' || isNaN(coord)) {
         return false;
       }
     }

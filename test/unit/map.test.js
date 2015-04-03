@@ -5,20 +5,28 @@ var fs = require('fs');
 function request (bbox) {
   return {
     method: 'GET',
-    url: '/xml/map' + bbox ? '?bbox='+bbox : ''
+    url: '/xml/map?bbox='+bbox
   };
 }
 
 
-describe('map endpoint', function () {
+describe.only('map endpoint', function () {
   
   it('fails without valid bbox parameter', function (done) {
-
-    server.injectThen(request())
+    server.injectThen(request('0,0,0.1'))
     .then(function (res) {
-
-      res.statusCode.should.not.eql(200);
-
+      res.statusCode.should.not.equal(200);
+      done();
+    })
+    .catch(function (err) {
+      return done(err);
+    });
+  });
+ 
+  it.only('succeeds with valid bbox parameter', function (done) {
+    server.injectThen(request('0,0,0.1,0.1'))
+    .then(function (res) {
+      res.statusCode.should.equal(200);
       done();
     })
     .catch(function (err) {
