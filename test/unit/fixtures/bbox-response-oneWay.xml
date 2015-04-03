@@ -1,0 +1,221 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<osm version="6" generator="DevelopmentSeed">
+  <bounds minlat="9.584500864717155" minlon="123.81042480468751" maxlat="9.58991730708743" maxlon="123.81591796875"/>
+  <node id="77939" visible="true" version="1" changeset="0" timestamp="Wed Mar 11 2015 09:38:41 GMT-0400 (EDT)" user="DevelopmentSeed" uid="1" lat="9.5911204" lon="123.8148886"/>
+  <node id="77940" visible="true" version="1" changeset="0" timestamp="Wed Mar 11 2015 09:38:41 GMT-0400 (EDT)" user="DevelopmentSeed" uid="1" lat="9.5909964" lon="123.8148876"/>
+  <node id="77941" visible="true" version="1" changeset="0" timestamp="Wed Mar 11 2015 09:38:41 GMT-0400 (EDT)" user="DevelopmentSeed" uid="1" lat="9.5908789" lon="123.8148863"/>
+  <node id="77942" visible="true" version="1" changeset="0" timestamp="Wed Mar 11 2015 09:38:41 GMT-0400 (EDT)" user="DevelopmentSeed" uid="1" lat="9.5907625" lon="123.8148805"/>
+  <node id="77943" visible="true" version="1" changeset="0" timestamp="Wed Mar 11 2015 09:38:41 GMT-0400 (EDT)" user="DevelopmentSeed" uid="1" lat="9.5906433" lon="123.8148696"/>
+  <node id="77944" visible="true" version="1" changeset="0" timestamp="Wed Mar 11 2015 09:38:41 GMT-0400 (EDT)" user="DevelopmentSeed" uid="1" lat="9.5905242" lon="123.8148629"/>
+  <node id="77945" visible="true" version="1" changeset="0" timestamp="Wed Mar 11 2015 09:38:41 GMT-0400 (EDT)" user="DevelopmentSeed" uid="1" lat="9.5904033" lon="123.8148554"/>
+  <node id="77946" visible="true" version="1" changeset="0" timestamp="Wed Mar 11 2015 09:38:41 GMT-0400 (EDT)" user="DevelopmentSeed" uid="1" lat="9.5902792" lon="123.8148479"/>
+  <node id="77947" visible="true" version="1" changeset="0" timestamp="Wed Mar 11 2015 09:38:41 GMT-0400 (EDT)" user="DevelopmentSeed" uid="1" lat="9.5901576" lon="123.8148402"/>
+  <node id="77948" visible="true" version="1" changeset="0" timestamp="Wed Mar 11 2015 09:38:41 GMT-0400 (EDT)" user="DevelopmentSeed" uid="1" lat="9.5900338" lon="123.8148375"/>
+  <node id="77949" visible="true" version="1" changeset="0" timestamp="Wed Mar 11 2015 09:38:41 GMT-0400 (EDT)" user="DevelopmentSeed" uid="1" lat="9.5899106" lon="123.8148344"/>
+  <node id="77950" visible="true" version="1" changeset="0" timestamp="Wed Mar 11 2015 09:38:41 GMT-0400 (EDT)" user="DevelopmentSeed" uid="1" lat="9.5897877" lon="123.8148352"/>
+  <node id="77951" visible="true" version="1" changeset="0" timestamp="Wed Mar 11 2015 09:38:41 GMT-0400 (EDT)" user="DevelopmentSeed" uid="1" lat="9.5896691" lon="123.8148332"/>
+  <node id="77952" visible="true" version="1" changeset="0" timestamp="Wed Mar 11 2015 09:38:41 GMT-0400 (EDT)" user="DevelopmentSeed" uid="1" lat="9.5895618" lon="123.8148301"/>
+  <node id="77953" visible="true" version="1" changeset="0" timestamp="Wed Mar 11 2015 09:38:41 GMT-0400 (EDT)" user="DevelopmentSeed" uid="1" lat="9.5894592" lon="123.814826"/>
+  <node id="77954" visible="true" version="1" changeset="0" timestamp="Wed Mar 11 2015 09:38:41 GMT-0400 (EDT)" user="DevelopmentSeed" uid="1" lat="9.5893539" lon="123.8148221"/>
+  <node id="77955" visible="true" version="1" changeset="0" timestamp="Wed Mar 11 2015 09:38:41 GMT-0400 (EDT)" user="DevelopmentSeed" uid="1" lat="9.5892463" lon="123.8148249"/>
+  <node id="77956" visible="true" version="1" changeset="0" timestamp="Wed Mar 11 2015 09:38:41 GMT-0400 (EDT)" user="DevelopmentSeed" uid="1" lat="9.5891341" lon="123.8148239"/>
+  <node id="77957" visible="true" version="1" changeset="0" timestamp="Wed Mar 11 2015 09:38:41 GMT-0400 (EDT)" user="DevelopmentSeed" uid="1" lat="9.5890213" lon="123.8148269"/>
+  <node id="77958" visible="true" version="1" changeset="0" timestamp="Wed Mar 11 2015 09:38:41 GMT-0400 (EDT)" user="DevelopmentSeed" uid="1" lat="9.588912" lon="123.8148291"/>
+  <node id="77959" visible="true" version="1" changeset="0" timestamp="Wed Mar 11 2015 09:38:41 GMT-0400 (EDT)" user="DevelopmentSeed" uid="1" lat="9.5888001" lon="123.8148256"/>
+  <node id="77960" visible="true" version="1" changeset="0" timestamp="Wed Mar 11 2015 09:38:41 GMT-0400 (EDT)" user="DevelopmentSeed" uid="1" lat="9.5886846" lon="123.8148259"/>
+  <node id="77961" visible="true" version="1" changeset="0" timestamp="Wed Mar 11 2015 09:38:41 GMT-0400 (EDT)" user="DevelopmentSeed" uid="1" lat="9.5885651" lon="123.8148242"/>
+  <node id="77962" visible="true" version="1" changeset="0" timestamp="Wed Mar 11 2015 09:38:41 GMT-0400 (EDT)" user="DevelopmentSeed" uid="1" lat="9.5884504" lon="123.8148245"/>
+  <node id="77963" visible="true" version="1" changeset="0" timestamp="Wed Mar 11 2015 09:38:41 GMT-0400 (EDT)" user="DevelopmentSeed" uid="1" lat="9.5883552" lon="123.8148274"/>
+  <node id="77964" visible="true" version="1" changeset="0" timestamp="Wed Mar 11 2015 09:38:41 GMT-0400 (EDT)" user="DevelopmentSeed" uid="1" lat="9.5882755" lon="123.8148289"/>
+  <node id="77965" visible="true" version="1" changeset="0" timestamp="Wed Mar 11 2015 09:38:41 GMT-0400 (EDT)" user="DevelopmentSeed" uid="1" lat="9.588197" lon="123.8148328"/>
+  <node id="77966" visible="true" version="1" changeset="0" timestamp="Wed Mar 11 2015 09:38:41 GMT-0400 (EDT)" user="DevelopmentSeed" uid="1" lat="9.5881103" lon="123.8148368"/>
+  <node id="77967" visible="true" version="1" changeset="0" timestamp="Wed Mar 11 2015 09:38:41 GMT-0400 (EDT)" user="DevelopmentSeed" uid="1" lat="9.588014" lon="123.8148404"/>
+  <node id="77968" visible="true" version="1" changeset="0" timestamp="Wed Mar 11 2015 09:38:41 GMT-0400 (EDT)" user="DevelopmentSeed" uid="1" lat="9.5879108" lon="123.8148424"/>
+  <node id="77969" visible="true" version="1" changeset="0" timestamp="Wed Mar 11 2015 09:38:41 GMT-0400 (EDT)" user="DevelopmentSeed" uid="1" lat="9.5878087" lon="123.8148417"/>
+  <node id="77970" visible="true" version="1" changeset="0" timestamp="Wed Mar 11 2015 09:38:41 GMT-0400 (EDT)" user="DevelopmentSeed" uid="1" lat="9.5877112" lon="123.814843"/>
+  <node id="77971" visible="true" version="1" changeset="0" timestamp="Wed Mar 11 2015 09:38:41 GMT-0400 (EDT)" user="DevelopmentSeed" uid="1" lat="9.5876232" lon="123.8148438"/>
+  <node id="77972" visible="true" version="1" changeset="0" timestamp="Wed Mar 11 2015 09:38:41 GMT-0400 (EDT)" user="DevelopmentSeed" uid="1" lat="9.5875323" lon="123.8148437"/>
+  <node id="77973" visible="true" version="1" changeset="0" timestamp="Wed Mar 11 2015 09:38:41 GMT-0400 (EDT)" user="DevelopmentSeed" uid="1" lat="9.5874382" lon="123.8148499"/>
+  <node id="77974" visible="true" version="1" changeset="0" timestamp="Wed Mar 11 2015 09:38:41 GMT-0400 (EDT)" user="DevelopmentSeed" uid="1" lat="9.5873375" lon="123.8148546"/>
+  <node id="77975" visible="true" version="1" changeset="0" timestamp="Wed Mar 11 2015 09:38:41 GMT-0400 (EDT)" user="DevelopmentSeed" uid="1" lat="9.5872349" lon="123.8148592"/>
+  <node id="77976" visible="true" version="1" changeset="0" timestamp="Wed Mar 11 2015 09:38:41 GMT-0400 (EDT)" user="DevelopmentSeed" uid="1" lat="9.5871336" lon="123.8148614"/>
+  <node id="77977" visible="true" version="1" changeset="0" timestamp="Wed Mar 11 2015 09:38:41 GMT-0400 (EDT)" user="DevelopmentSeed" uid="1" lat="9.5870294" lon="123.8148621"/>
+  <node id="77978" visible="true" version="1" changeset="0" timestamp="Wed Mar 11 2015 09:38:41 GMT-0400 (EDT)" user="DevelopmentSeed" uid="1" lat="9.5869232" lon="123.8148624"/>
+  <node id="77979" visible="true" version="1" changeset="0" timestamp="Wed Mar 11 2015 09:38:41 GMT-0400 (EDT)" user="DevelopmentSeed" uid="1" lat="9.5868181" lon="123.8148642"/>
+  <node id="77980" visible="true" version="1" changeset="0" timestamp="Wed Mar 11 2015 09:38:41 GMT-0400 (EDT)" user="DevelopmentSeed" uid="1" lat="9.5867131" lon="123.8148692"/>
+  <node id="77981" visible="true" version="1" changeset="0" timestamp="Wed Mar 11 2015 09:38:41 GMT-0400 (EDT)" user="DevelopmentSeed" uid="1" lat="9.5866101" lon="123.8148728"/>
+  <node id="77982" visible="true" version="1" changeset="0" timestamp="Wed Mar 11 2015 09:38:41 GMT-0400 (EDT)" user="DevelopmentSeed" uid="1" lat="9.5865086" lon="123.8148785"/>
+  <node id="77983" visible="true" version="1" changeset="0" timestamp="Wed Mar 11 2015 09:38:41 GMT-0400 (EDT)" user="DevelopmentSeed" uid="1" lat="9.5864024" lon="123.8148781"/>
+  <node id="77984" visible="true" version="1" changeset="0" timestamp="Wed Mar 11 2015 09:38:41 GMT-0400 (EDT)" user="DevelopmentSeed" uid="1" lat="9.5862967" lon="123.8148791"/>
+  <node id="77985" visible="true" version="1" changeset="0" timestamp="Wed Mar 11 2015 09:38:41 GMT-0400 (EDT)" user="DevelopmentSeed" uid="1" lat="9.586192" lon="123.814884"/>
+  <node id="77986" visible="true" version="1" changeset="0" timestamp="Wed Mar 11 2015 09:38:41 GMT-0400 (EDT)" user="DevelopmentSeed" uid="1" lat="9.586146" lon="123.8148877"/>
+  <node id="77987" visible="true" version="1" changeset="0" timestamp="Wed Mar 11 2015 09:38:41 GMT-0400 (EDT)" user="DevelopmentSeed" uid="1" lat="9.5860885" lon="123.8148914"/>
+  <node id="77988" visible="true" version="1" changeset="0" timestamp="Wed Mar 11 2015 09:38:41 GMT-0400 (EDT)" user="DevelopmentSeed" uid="1" lat="9.5859907" lon="123.8149029"/>
+  <node id="77989" visible="true" version="1" changeset="0" timestamp="Wed Mar 11 2015 09:38:41 GMT-0400 (EDT)" user="DevelopmentSeed" uid="1" lat="9.5858895" lon="123.814912"/>
+  <node id="77990" visible="true" version="1" changeset="0" timestamp="Wed Mar 11 2015 09:38:41 GMT-0400 (EDT)" user="DevelopmentSeed" uid="1" lat="9.5857835" lon="123.8149119"/>
+  <node id="77991" visible="true" version="1" changeset="0" timestamp="Wed Mar 11 2015 09:38:41 GMT-0400 (EDT)" user="DevelopmentSeed" uid="1" lat="9.5856726" lon="123.8149117"/>
+  <node id="77992" visible="true" version="1" changeset="0" timestamp="Wed Mar 11 2015 09:38:41 GMT-0400 (EDT)" user="DevelopmentSeed" uid="1" lat="9.5855631" lon="123.8149104"/>
+  <node id="77993" visible="true" version="1" changeset="0" timestamp="Wed Mar 11 2015 09:38:41 GMT-0400 (EDT)" user="DevelopmentSeed" uid="1" lat="9.5854578" lon="123.8149201"/>
+  <node id="77994" visible="true" version="1" changeset="0" timestamp="Wed Mar 11 2015 09:38:41 GMT-0400 (EDT)" user="DevelopmentSeed" uid="1" lat="9.5853603" lon="123.814937"/>
+  <node id="77995" visible="true" version="1" changeset="0" timestamp="Wed Mar 11 2015 09:38:41 GMT-0400 (EDT)" user="DevelopmentSeed" uid="1" lat="9.585268" lon="123.8149608"/>
+  <node id="77996" visible="true" version="1" changeset="0" timestamp="Wed Mar 11 2015 09:38:41 GMT-0400 (EDT)" user="DevelopmentSeed" uid="1" lat="9.5851831" lon="123.8149908"/>
+  <node id="77997" visible="true" version="1" changeset="0" timestamp="Wed Mar 11 2015 09:38:41 GMT-0400 (EDT)" user="DevelopmentSeed" uid="1" lat="9.5850977" lon="123.8150134"/>
+  <node id="77998" visible="true" version="1" changeset="0" timestamp="Wed Mar 11 2015 09:38:41 GMT-0400 (EDT)" user="DevelopmentSeed" uid="1" lat="9.585016" lon="123.8150294"/>
+  <node id="77999" visible="true" version="1" changeset="0" timestamp="Wed Mar 11 2015 09:38:41 GMT-0400 (EDT)" user="DevelopmentSeed" uid="1" lat="9.584927" lon="123.8150495"/>
+  <node id="78000" visible="true" version="1" changeset="0" timestamp="Wed Mar 11 2015 09:38:41 GMT-0400 (EDT)" user="DevelopmentSeed" uid="1" lat="9.5848298" lon="123.8150732"/>
+  <node id="78001" visible="true" version="1" changeset="0" timestamp="Wed Mar 11 2015 09:38:41 GMT-0400 (EDT)" user="DevelopmentSeed" uid="1" lat="9.5847336" lon="123.815097"/>
+  <node id="78002" visible="true" version="1" changeset="0" timestamp="Wed Mar 11 2015 09:38:41 GMT-0400 (EDT)" user="DevelopmentSeed" uid="1" lat="9.5846391" lon="123.815123"/>
+  <node id="78003" visible="true" version="1" changeset="0" timestamp="Wed Mar 11 2015 09:38:41 GMT-0400 (EDT)" user="DevelopmentSeed" uid="1" lat="9.5845446" lon="123.8151453"/>
+  <node id="78004" visible="true" version="1" changeset="0" timestamp="Wed Mar 11 2015 09:38:41 GMT-0400 (EDT)" user="DevelopmentSeed" uid="1" lat="9.5844495" lon="123.815169"/>
+  <node id="78005" visible="true" version="1" changeset="0" timestamp="Wed Mar 11 2015 09:38:41 GMT-0400 (EDT)" user="DevelopmentSeed" uid="1" lat="9.5843569" lon="123.815197"/>
+  <node id="78006" visible="true" version="1" changeset="0" timestamp="Wed Mar 11 2015 09:38:41 GMT-0400 (EDT)" user="DevelopmentSeed" uid="1" lat="9.5842673" lon="123.8152209"/>
+  <node id="78007" visible="true" version="1" changeset="0" timestamp="Wed Mar 11 2015 09:38:41 GMT-0400 (EDT)" user="DevelopmentSeed" uid="1" lat="9.584179" lon="123.8152472"/>
+  <node id="78008" visible="true" version="1" changeset="0" timestamp="Wed Mar 11 2015 09:38:41 GMT-0400 (EDT)" user="DevelopmentSeed" uid="1" lat="9.5840907" lon="123.8152752"/>
+  <node id="78009" visible="true" version="1" changeset="0" timestamp="Wed Mar 11 2015 09:38:41 GMT-0400 (EDT)" user="DevelopmentSeed" uid="1" lat="9.5840044" lon="123.8153053"/>
+  <node id="78010" visible="true" version="1" changeset="0" timestamp="Wed Mar 11 2015 09:38:41 GMT-0400 (EDT)" user="DevelopmentSeed" uid="1" lat="9.5839139" lon="123.8153329"/>
+  <node id="78011" visible="true" version="1" changeset="0" timestamp="Wed Mar 11 2015 09:38:41 GMT-0400 (EDT)" user="DevelopmentSeed" uid="1" lat="9.5838232" lon="123.8153596"/>
+  <node id="78012" visible="true" version="1" changeset="0" timestamp="Wed Mar 11 2015 09:38:41 GMT-0400 (EDT)" user="DevelopmentSeed" uid="1" lat="9.5837358" lon="123.8153933"/>
+  <node id="78013" visible="true" version="1" changeset="0" timestamp="Wed Mar 11 2015 09:38:41 GMT-0400 (EDT)" user="DevelopmentSeed" uid="1" lat="9.5836457" lon="123.8154209"/>
+  <node id="78014" visible="true" version="1" changeset="0" timestamp="Wed Mar 11 2015 09:38:41 GMT-0400 (EDT)" user="DevelopmentSeed" uid="1" lat="9.5835577" lon="123.8154506"/>
+  <node id="78015" visible="true" version="1" changeset="0" timestamp="Wed Mar 11 2015 09:38:41 GMT-0400 (EDT)" user="DevelopmentSeed" uid="1" lat="9.5834706" lon="123.8154793"/>
+  <node id="78016" visible="true" version="1" changeset="0" timestamp="Wed Mar 11 2015 09:38:41 GMT-0400 (EDT)" user="DevelopmentSeed" uid="1" lat="9.5833865" lon="123.8155113"/>
+  <node id="78017" visible="true" version="1" changeset="0" timestamp="Wed Mar 11 2015 09:38:41 GMT-0400 (EDT)" user="DevelopmentSeed" uid="1" lat="9.5833049" lon="123.8155428"/>
+  <node id="78018" visible="true" version="1" changeset="0" timestamp="Wed Mar 11 2015 09:38:41 GMT-0400 (EDT)" user="DevelopmentSeed" uid="1" lat="9.5832193" lon="123.8155793"/>
+  <node id="78019" visible="true" version="1" changeset="0" timestamp="Wed Mar 11 2015 09:38:41 GMT-0400 (EDT)" user="DevelopmentSeed" uid="1" lat="9.5831319" lon="123.8156131"/>
+  <node id="78020" visible="true" version="1" changeset="0" timestamp="Wed Mar 11 2015 09:38:41 GMT-0400 (EDT)" user="DevelopmentSeed" uid="1" lat="9.5830501" lon="123.8156523"/>
+  <node id="74038" visible="true" version="1" changeset="0" timestamp="Wed Mar 11 2015 09:38:41 GMT-0400 (EDT)" user="DevelopmentSeed" uid="1" lat="9.5820416" lon="123.8162931"/>
+  <node id="77930" visible="true" version="1" changeset="0" timestamp="Wed Mar 11 2015 09:38:41 GMT-0400 (EDT)" user="DevelopmentSeed" uid="1" lat="9.5920337" lon="123.8149137"/>
+  <node id="77932" visible="true" version="1" changeset="0" timestamp="Wed Mar 11 2015 09:38:41 GMT-0400 (EDT)" user="DevelopmentSeed" uid="1" lat="9.5920058" lon="123.8149121"/>
+  <node id="77933" visible="true" version="1" changeset="0" timestamp="Wed Mar 11 2015 09:38:41 GMT-0400 (EDT)" user="DevelopmentSeed" uid="1" lat="9.5918909" lon="123.8149087"/>
+  <node id="77934" visible="true" version="1" changeset="0" timestamp="Wed Mar 11 2015 09:38:41 GMT-0400 (EDT)" user="DevelopmentSeed" uid="1" lat="9.5917702" lon="123.8149033"/>
+  <node id="77935" visible="true" version="1" changeset="0" timestamp="Wed Mar 11 2015 09:38:41 GMT-0400 (EDT)" user="DevelopmentSeed" uid="1" lat="9.5916419" lon="123.814896"/>
+  <node id="77936" visible="true" version="1" changeset="0" timestamp="Wed Mar 11 2015 09:38:41 GMT-0400 (EDT)" user="DevelopmentSeed" uid="1" lat="9.5915105" lon="123.8148953"/>
+  <node id="77937" visible="true" version="1" changeset="0" timestamp="Wed Mar 11 2015 09:38:41 GMT-0400 (EDT)" user="DevelopmentSeed" uid="1" lat="9.5913779" lon="123.8148951"/>
+  <node id="77938" visible="true" version="1" changeset="0" timestamp="Wed Mar 11 2015 09:38:41 GMT-0400 (EDT)" user="DevelopmentSeed" uid="1" lat="9.5912469" lon="123.8148922"/>
+  <node id="78021" visible="true" version="1" changeset="0" timestamp="Wed Mar 11 2015 09:38:41 GMT-0400 (EDT)" user="DevelopmentSeed" uid="1" lat="9.5829694" lon="123.8156854"/>
+  <node id="78022" visible="true" version="1" changeset="0" timestamp="Wed Mar 11 2015 09:38:41 GMT-0400 (EDT)" user="DevelopmentSeed" uid="1" lat="9.5828968" lon="123.815717"/>
+  <node id="78023" visible="true" version="1" changeset="0" timestamp="Wed Mar 11 2015 09:38:41 GMT-0400 (EDT)" user="DevelopmentSeed" uid="1" lat="9.5828313" lon="123.8157478"/>
+  <node id="78024" visible="true" version="1" changeset="0" timestamp="Wed Mar 11 2015 09:38:41 GMT-0400 (EDT)" user="DevelopmentSeed" uid="1" lat="9.5827646" lon="123.8157862"/>
+  <node id="78025" visible="true" version="1" changeset="0" timestamp="Wed Mar 11 2015 09:38:41 GMT-0400 (EDT)" user="DevelopmentSeed" uid="1" lat="9.5826893" lon="123.8158347"/>
+  <node id="78026" visible="true" version="1" changeset="0" timestamp="Wed Mar 11 2015 09:38:41 GMT-0400 (EDT)" user="DevelopmentSeed" uid="1" lat="9.582607" lon="123.815885"/>
+  <node id="78027" visible="true" version="1" changeset="0" timestamp="Wed Mar 11 2015 09:38:41 GMT-0400 (EDT)" user="DevelopmentSeed" uid="1" lat="9.5825278" lon="123.8159422"/>
+  <node id="78028" visible="true" version="1" changeset="0" timestamp="Wed Mar 11 2015 09:38:41 GMT-0400 (EDT)" user="DevelopmentSeed" uid="1" lat="9.5824531" lon="123.8159995"/>
+  <node id="78029" visible="true" version="1" changeset="0" timestamp="Wed Mar 11 2015 09:38:41 GMT-0400 (EDT)" user="DevelopmentSeed" uid="1" lat="9.5823799" lon="123.816054"/>
+  <node id="78030" visible="true" version="1" changeset="0" timestamp="Wed Mar 11 2015 09:38:41 GMT-0400 (EDT)" user="DevelopmentSeed" uid="1" lat="9.5823112" lon="123.8161039"/>
+  <node id="78031" visible="true" version="1" changeset="0" timestamp="Wed Mar 11 2015 09:38:41 GMT-0400 (EDT)" user="DevelopmentSeed" uid="1" lat="9.5822453" lon="123.8161507"/>
+  <node id="78032" visible="true" version="1" changeset="0" timestamp="Wed Mar 11 2015 09:38:41 GMT-0400 (EDT)" user="DevelopmentSeed" uid="1" lat="9.5821777" lon="123.8161973"/>
+  <node id="78033" visible="true" version="1" changeset="0" timestamp="Wed Mar 11 2015 09:38:41 GMT-0400 (EDT)" user="DevelopmentSeed" uid="1" lat="9.5821052" lon="123.8162483"/>
+  <way id="77931" visible="true" version="1" changeset="0" timestamp="Wed Mar 11 2015 09:38:41 GMT-0400 (EDT)" user="DevelopmentSeed" uid="1">
+    <nd ref="77930"/>
+    <nd ref="77932"/>
+    <nd ref="77933"/>
+    <nd ref="77934"/>
+    <nd ref="77935"/>
+    <nd ref="77936"/>
+    <nd ref="77937"/>
+    <nd ref="77938"/>
+    <nd ref="77939"/>
+    <nd ref="77940"/>
+    <nd ref="77941"/>
+    <nd ref="77942"/>
+    <nd ref="77943"/>
+    <nd ref="77944"/>
+    <nd ref="77945"/>
+    <nd ref="77946"/>
+    <nd ref="77947"/>
+    <nd ref="77948"/>
+    <nd ref="77949"/>
+    <nd ref="77950"/>
+    <nd ref="77951"/>
+    <nd ref="77952"/>
+    <nd ref="77953"/>
+    <nd ref="77954"/>
+    <nd ref="77955"/>
+    <nd ref="77956"/>
+    <nd ref="77957"/>
+    <nd ref="77958"/>
+    <nd ref="77959"/>
+    <nd ref="77960"/>
+    <nd ref="77961"/>
+    <nd ref="77962"/>
+    <nd ref="77963"/>
+    <nd ref="77964"/>
+    <nd ref="77965"/>
+    <nd ref="77966"/>
+    <nd ref="77967"/>
+    <nd ref="77968"/>
+    <nd ref="77969"/>
+    <nd ref="77970"/>
+    <nd ref="77971"/>
+    <nd ref="77972"/>
+    <nd ref="77973"/>
+    <nd ref="77974"/>
+    <nd ref="77975"/>
+    <nd ref="77976"/>
+    <nd ref="77977"/>
+    <nd ref="77978"/>
+    <nd ref="77979"/>
+    <nd ref="77980"/>
+    <nd ref="77981"/>
+    <nd ref="77982"/>
+    <nd ref="77983"/>
+    <nd ref="77984"/>
+    <nd ref="77985"/>
+    <nd ref="77986"/>
+    <nd ref="77987"/>
+    <nd ref="77988"/>
+    <nd ref="77989"/>
+    <nd ref="77990"/>
+    <nd ref="77991"/>
+    <nd ref="77992"/>
+    <nd ref="77993"/>
+    <nd ref="77994"/>
+    <nd ref="77995"/>
+    <nd ref="77996"/>
+    <nd ref="77997"/>
+    <nd ref="77998"/>
+    <nd ref="77999"/>
+    <nd ref="78000"/>
+    <nd ref="78001"/>
+    <nd ref="78002"/>
+    <nd ref="78003"/>
+    <nd ref="78004"/>
+    <nd ref="78005"/>
+    <nd ref="78006"/>
+    <nd ref="78007"/>
+    <nd ref="78008"/>
+    <nd ref="78009"/>
+    <nd ref="78010"/>
+    <nd ref="78011"/>
+    <nd ref="78012"/>
+    <nd ref="78013"/>
+    <nd ref="78014"/>
+    <nd ref="78015"/>
+    <nd ref="78016"/>
+    <nd ref="78017"/>
+    <nd ref="78018"/>
+    <nd ref="78019"/>
+    <nd ref="78020"/>
+    <nd ref="78021"/>
+    <nd ref="78022"/>
+    <nd ref="78023"/>
+    <nd ref="78024"/>
+    <nd ref="78025"/>
+    <nd ref="78026"/>
+    <nd ref="78027"/>
+    <nd ref="78028"/>
+    <nd ref="78029"/>
+    <nd ref="78030"/>
+    <nd ref="78031"/>
+    <nd ref="78032"/>
+    <nd ref="78033"/>
+    <nd ref="74038"/>
+    <tag k="highway" v="secondary"/>
+    <tag k="or_rdclass" v="provincial"/>
+    <tag k="or_brgy" v="Dao"/>
+    <tag k="name" v="TINAGO_DAO ROAD"/>
+    <tag k="or_mun" v="Dauis"/>
+    <tag k="rd_cond" v="poor"/>
+    <tag k="source" v="OpenRoads"/>
+  </way>
+</osm>
