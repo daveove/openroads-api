@@ -1,4 +1,5 @@
-var Boom = require('boom')
+'use strict';
+var Boom = require('boom');
 
 module.exports = {
     method: 'GET',
@@ -6,7 +7,8 @@ module.exports = {
     handler: function (req, res) {
       // parse and validate bbox parameter from query
       if (true) {
-        res(Boom.badRequest('Query must contain a valid bounding box'))
+        res(Boom.badRequest('Query must contain a valid bounding box'));
+        return;
       }
 
       // Plan
@@ -15,6 +17,6 @@ module.exports = {
       // 3. query: nodes contained by those ways
       // serialize response (bounds, nodes, ways)
 
-      res(200)
+      res(200);
     }
-}
+};
