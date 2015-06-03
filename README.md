@@ -1,5 +1,5 @@
 # OpenRoads API
-[![Build Status](https://magnum.travis-ci.com/developmentseed/openroads-api.svg?token=tqZJSdEbKcpsuN9Fxqua&branch=develop)](https://magnum.travis-ci.com/developmentseed/openroads-api)
+[![Build Status](https://magnum.travis-ci.com/opengovt/openroads-api.svg?token=tqZJSdEbKcpsuN9Fxqua&branch=master)](https://magnum.travis-ci.com/opengovt/openroads-api)
 
 The OpenRoads API is part of the [OpenRoads project](https://github.com/developmentseed/openroads).
 
