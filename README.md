@@ -7,7 +7,7 @@ The OpenRoads API is part of the [OpenRoads project](https://github.com/developm
 
 ### Installing dependencies
 ```sh
-git clone git@github.com:developmentseed/openroads-api.git
+git clone git@github.com:opengovt/openroads-api.git
 cd openroads
 npm install
 ```
