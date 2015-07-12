@@ -87,7 +87,8 @@ module.exports = {
   path: '/upload/{changesetID?}',
   config: {
     payload: {
-      parse: false
+      parse: false,
+      maxBytes: 13500000
     }
   },
   handler: oscUpload
