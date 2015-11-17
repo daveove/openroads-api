@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "start": "node index.js",
-    "test": "PGSSLMODE=require OR_DEBUG=true mocha --recursive",
+    "test": "OR_DEBUG=true mocha --recursive",
     "gendoc": "./node_modules/.bin/apidoc -i routes",
     "postinstall": "npm run gendoc"
   },
