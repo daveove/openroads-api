@@ -1,0 +1,15 @@
+postgres:
+  build: ./db-server
+  ports:
+    - "5433:5432"
+api:
+  build: .
+  environment:
+    - DATABASE_URL=postgres://osm:password@postgres:5432/api06_test
+    - WAIT_COMMAND= [ $$(psql postgres://osm:password@postgres:5432/api06_test -c "select count(*) from admin_boundaries" | head -n 3 | tail -n 1) -gt 0 ]
+    - WAIT_SLEEP=2
+    - WAIT_START_CMD=npm test
+  links:
+    - postgres:postgres
+  ports:
+    - "4000:4000"

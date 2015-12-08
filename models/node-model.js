@@ -15,6 +15,7 @@ var knex = require('../connection.js');
 var log = require('../services/log.js');
 var RATIO = require('../services/ratio.js');
 var QuadTile = require('../services/quad-tile.js');
+var Chunk = require('../services/chunk.js');
 var NodeTag = require('./node-tag.js');
 var WayNode = require('./way-node.js');
 var Way = require('./way.js');
@@ -115,8 +116,8 @@ var Node = {
       var t = children[i];
       if (t.name() === 'tag') {
         tags.push({
-          k: t.attr('k'),
-          v: t.attr('v')
+          k: t.attr('k').value(),
+          v: t.attr('v').value()
         });
       }
     }
@@ -174,154 +175,141 @@ var Node = {
     return entities;
   },
 
-  // Generate create, modify, and destroy queries.
-  // Using as few connections as possible.
-  query: {
-    create: function(changeset, meta, map, transaction) {
-      var creates = changeset.create.node;
-      if (!creates) {
-        return [];
+  save: function(q) {
+    var actions = [];
+    var model = this;
+    ['create', 'modify', 'delete'].forEach(function(action) {
+      if (q.changeset[action].node) {
+        actions.push(action);
       }
+    });
+    return Promise.map(actions, function(action) {
+      return model[action](q);
+    })
+    .catch(function(err) {
+      log.error('Node changeset fails', err);
+      throw new Error(err);
+    });
+  },
 
-      // Map each node creation to a model with proper attributes.
-      var models = creates.map(function(entity) {
-        return Node.fromEntity(entity, meta);
-      });
+  create: function(q) {
 
-      // Insert all node models, then use returned ids to insert all tags.
-      var query = transaction(Node.tableName).insert(models).returning('id').then(function(ids) {
-        var tags = [];
-        for (var i = 0, ii = creates.length; i < ii; ++i) {
+    var raw = q.changeset.create.node;
 
-          // We need to take the original object from the changeset query here.
-          // It contains node tags.
-          var change = creates[i];
+    // Map each node creation to a model with proper attributes.
+    var models = raw.map(function(entity) { return Node.fromEntity(entity, q.meta); });
 
-          // Re-map the old node ID to the new node ID on the map object.
-          map.node[change.id] = ids[i];
-
-          // Overwrite old ID's with new Node ID's on the changeset.
-          // This assumes that ID's returned from postgresql maintain the same order
-          // that they are inserted in.
-          change.id = ids[i];
-
-          // Check for Node tags. If they exist, they will be in the form of an array.
-          if (change.tag && change.tag.length) {
-            tags.push(change.tag.map(function(tag) {
-              return {
-                k: tag.k,
-                v: tag.v,
-                node_id: change.id
-              };
-            }));
-          }
-        }
-
-        // Only save tags if there are any.
-        if (tags.length) {
-          tags = [].concat.apply([], tags);
-          return transaction(NodeTag.tableName).insert(tags).catch(function(err) {
-            log.error('Creating node tags in create', err);
-            throw new Error(err);
-          });
-        }
-        else return
-      })
-      .catch(function(err) {
-        log.error('Inserting new nodes in create', err);
-        throw new Error(err);
-      });
-      return query;
-    },
-
-    modify: function(changeset, meta, map, transaction) {
-      var modifies = changeset.modify.node;
-      if (!modifies) {
-        return [];
-      }
-
-      // Create a list of modify queries.
-      // TODO so far as I know, there's no way to bulk-modify a bunch of records.
-      // So set up a list of all of them that we can call Promise.all() on.
-      var nodeChanges = modifies.map(function(entity) {
-
-        // Create a new model object with the proper attributes.
-        var model = Node.fromEntity(entity, meta);
-        var query = transaction(Node.tableName).where({id: entity.id}).update(model).catch(function(err) {
-          log.error('Modify single node', err);
-          throw new Error(err);
-        });
-        return query;
-      });
-
-      // We'll need all the Node IDs to delete it's way tags.
-      // Since we're looping over the modify object, record all the
-      // new node tags.
-      var ids = [];
+    function remap(_ids) {
+      var ids = [].concat.apply([], _ids);
+      log.info('Remapping', ids.length, 'node IDs');
       var tags = [];
-      for (var i = 0, ii = modifies.length; i < ii; ++i) {
-        var change = modifies[i];
-        ids.push(parseInt(change.id, 10));
-        if (change.tag && change.tag.length) {
-          tags.push(change.tag.map(function(tag) {
+      raw.forEach(function(entity, i) {
+        // create a map of the old id to new id for ways, relations to reference.
+        q.map.node[entity.id] = ids[i];
+        // update the new node id on the changeset
+        // TODO is this step necessary?
+        entity.id = ids[i];
+        // Check for Node tags. If they exist, they will be in the form of an array.
+        if (entity.tag && entity.tag.length) {
+          tags.push(entity.tag.map(function(t) {
             return {
-              k: tag.k,
-              v: tag.v,
-              node_id: change.id
+              k: t.k,
+              v: t.v,
+              node_id: entity.id
             };
           }));
         }
-      }
-
-      // Call Promise.all() on the modifications.
-      // After that's done, we can safely delete node tags and insert new ones.
-      var query = Promise.all(nodeChanges).then(function() {
-        return transaction(NodeTag.tableName).whereIn('node_id', ids).del().then(function() {
-          if (tags.length) {
-            tags = [].concat.apply([], tags);
-            return transaction(NodeTag.tableName).insert(tags).catch(function(err) {
-              log.error('Creating node tags in modify', err);
-              throw new Error(err);
-            });
-          }
-          else return
-        }).catch(function(err) {
-          log.error('Deleting node tags in modify.', err);
-          throw new Error(err);
-        });
-      }).catch(function(err) {
-        log.error('Modifying all nodes.', err);
-        throw new Error(err);
       });
-      return query;
-    },
-
-    destroy: function(changeset, meta, map, transaction) {
-      var destroys = changeset.delete.node;
-      if (!destroys) {
-        return [];
-      }
-      var ids = _.pluck(destroys, 'id');
-      var query = transaction(Node.tableName).whereIn('id', ids).update({
-        visible: false,
-        changeset_id: meta.id
-      }).returning('id').then(function(invisibleNodes) {
-        return transaction(NodeTag.tableName).whereIn('node_id', invisibleNodes).del().returning('node_id').then(function(deleted) {
-          // log.info('Nodes set invisible', invisibleNodes.join(', '));
-          // log.info('Node tags deleted', deleted.join(', '));
-        }).catch(function(err) {
-          log.error('Deleting node tags in delete', err);
-          throw new Error(err);
-        });
-      })
-      .catch(function(err) {
-        log.error('Deleting nodes in delete', err);
-        throw new Error(err);
-      });
-      return query;
+      return tags;
     }
+
+    function saveTags (tags) {
+      // Only save tags if there are any.
+      if (tags.length) {
+        tags = [].concat.apply([], tags);
+
+        return Promise.map(Chunk(tags), function(tags) {
+          return q.transaction(NodeTag.tableName).insert(tags)
+        }, {concurrency: 1})
+
+        .catch(function(err) {
+          log.error('Creating node tags in create', err);
+          throw new Error(err);
+        });
+      }
+      return [];
+    }
+
+    return Promise.map(Chunk(models), function(models) {
+      return q.transaction(Node.tableName).insert(models).returning('id');
+    }, {concurrency: 1})
+    .then(remap)
+    .then(saveTags)
+    .catch(function(err) {
+      log.error('Inserting new nodes in create', err);
+      throw new Error(err);
+    });
   },
+
+  modify: function(q) {
+    var raw = q.changeset.modify.node;
+
+    function deleteTags () {
+      var ids = raw.map(function(entity) { return parseInt(entity.id, 10); });
+      return q.transaction(NodeTag.tableName).whereIn('node_id', ids).del();
+    }
+
+    return Promise.map(raw, function(entity) {
+      return q.transaction(Node.tableName).where({id: entity.id})
+        .update(Node.fromEntity(entity, q.meta));
+    })
+    .then(deleteTags)
+    .then(function () {
+      var tags = [];
+      raw.forEach(function(entity, i) {
+        if (entity.tag && entity.tag.length) {
+          tags.push(entity.tag.map(function(t) {
+            return {
+              k: t.k,
+              v: t.v,
+              node_id: entity.id
+            }
+          }));
+        }
+      });
+      if (tags.length) {
+        tags = [].concat.apply([], tags);
+        return q.transaction(NodeTag.tableName).insert(tags);
+      }
+      return [];
+    })
+    .catch(function(err) {
+      log.error('Error modifying nodes', err);
+      throw new Error(err);
+    });
+  },
+
+  'delete': function(q) {
+    var ids = _.pluck(q.changeset['delete'].node, 'id');
+
+    return q.transaction(Node.tableName).whereIn('id', ids)
+    .update({ visible: false, changeset_id: q.meta.id }).returning('id')
+
+    .then(function(invisibleNodes) {
+      return q.transaction(NodeTag.tableName).whereIn('node_id', invisibleNodes)
+      .del().returning('node_id')
+    })
+
+    .tap(function(deleted) {
+      // log.info('Nodes set invisible', invisibleNodes.join(', '));
+      // log.info('Node tags deleted', deleted.join(', '));
+    })
+
+    .catch(function(err) {
+      log.error('Error deleting nodes', err);
+      throw new Error(err);
+    });
+  }
 };
 
 module.exports = Node;
-

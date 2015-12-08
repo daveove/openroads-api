@@ -74,17 +74,14 @@ var Relation = {
   fromOSM: function(xml) {
   },
 
-  subquery: function(entities, ids, map, transaction) {
+  createDependents: function(raw, ids, map, transaction) {
     var tags = [];
     var members = [];
-    for (var i = 0, ii = entities.length; i < ii; ++i) {
+    raw.forEach(function(entity, i) {
 
-      // This is the original change object.
-      // We use this to retrieve #tag and #member
-      var change = entities[i];
       var id = ids[i];
-      if (change.tag && change.tag.length) {
-        tags.push(change.tag.map(function(tag) {
+      if (entity.tag && entity.tag.length) {
+        tags.push(entity.tag.map(function(tag) {
           return {
             k: tag.k,
             v: tag.v,
@@ -93,10 +90,8 @@ var Relation = {
         }));
       }
 
-      // Not sure if you can create a relation without
-      // at least one member, so check if it's there.
-      if (change.member && change.member.length) {
-        members.push(change.member.map(function(member, i) {
+      if (entity.member && entity.member.length) {
+        members.push(entity.member.map(function(member, i) {
 
           // We can use the map variable to get the newly-created entity ID
           // if the one that came from the editor is a negative value.
@@ -108,129 +103,110 @@ var Relation = {
           return Member.fromEntity(member);
         }));
       }
-    }
+    });
 
-    var subquery = [];
-    if (members.length) {
-      subquery.push(transaction(Member.tableName).insert(_.flatten(members)).catch(function(err) {
-        log.error('Creating relation members', err);
-        throw new Error(err);
-      }));
-    }
-    if (tags.length) {
-      subquery.push(transaction(RelationTag.tableName).insert(_.flatten(tags)).catch(function(err) {
-        log.error('Creating relation tags', err);
-        throw new Error(err);
-      }));
-    }
-
-    return subquery;
+    return Promise.all([
+      {data: members, table: Member.tableName},
+      {data: tags, table: RelationTag.tableName}
+    ].map(function(d) {
+      if (d.data.length) {
+        var data = [].concat.apply([], d.data);
+        return transaction(d.table).insert(data);
+      }
+      return [];
+    }))
+    .catch(function(err) {
+      log.error('Creating relation tags and members', err);
+      throw new Error(err);
+    });
   },
 
-  destroyDependents: function(transaction, ids) {
+  destroyDependents: function(ids, transaction) {
     return Promise.all([
       transaction(Member.tableName).whereIn('relation_id', ids).del(),
       transaction(RelationTag.tableName).whereIn('relation_id', ids).del()
     ]).catch(function(err) {
       log.error('Destroying relation tags and members', err);
-    })
+    });
   },
 
-  query: {
-    create: function(changeset, meta, map, transaction) {
-      var creates = changeset.create.relation;
-      if (!creates) {
-        return [];
+  save: function(q) {
+    var actions = [];
+    var model = this;
+    ['create', 'modify', 'delete'].forEach(function(action) {
+      if (q.changeset[action].relation) {
+        actions.push(action);
       }
+    });
+    return Promise.map(actions, function(action) {
+      return model[action](q);
+    })
+    .catch(function(err) {
+      log.error('Relation changeset fails', err);
+      throw new Error(err);
+    });
+  },
 
-      var models = creates.map(function(entity) {
-        return Relation.fromEntity(entity, meta);
+  create: function(q) {
+    var raw = q.changeset.create.relation;
+
+    var models = raw.map(function(entity) {
+      return Relation.fromEntity(entity, q.meta);
+    });
+
+    return q.transaction(Relation.tableName).insert(models).returning('id')
+    .then(function(ids) {
+      // We don't necessarily need to update these ids, but it's useful for testing,
+      // as this will be included in the server response.
+      raw.forEach(function(entity, i) {
+        q.map.relation[entity.id] = ids[i];
       });
 
-      // Bundle all the relation insertions.
-      // Then do both the members and tags together.
-      var query = transaction(Relation.tableName)
-      .insert(models)
-      .returning('id')
-      .then(function(ids) {
+      // Save members and tags.
+      return Relation.createDependents(raw, ids, q.map, q.transaction);
+    })
+    .catch(function(err) {
+      log.error('Inserting new relations', err);
+      throw new Error(err);
+    });
+  },
 
-        // Although we don't need the new IDs in the changeset,
-        // it's useful to return a map of new IDs in the final response
-        // for testing purposes.
-        creates.forEach(function(change, i) {
-          map.relation[change.id] = ids[i];
-        });
+  modify: function(q) {
+    var raw = q.changeset.modify.relation;
+    var ids = _.pluck(raw, 'id');
 
-        // Use the changeset and new IDs to retrieve the members and tags.
-        // Pass along the map object to retrieve new member IDs.
-        // This returns an array of promises.
-        var subquery = Relation.subquery(creates, ids, map, transaction);
-        if (subquery.length) {
-          return Promise.all(subquery);
-        } else return
-      })
+    return Promise.map(raw, function(entity) {
+      var model = Relation.fromEntity(entity, q.meta);
+      return q.transaction(Relation.tableName).where({ id: entity.id }).update(model)
+    })
+    .then(function() {
+      return Relation.destroyDependents(ids, q.transaction);
+    })
+    .then(function() {
+      return Relation.createDependents(raw, ids, q.map, q.transaction);
+    })
+    .catch(function(err) {
+      log.error('Modifying relationship status, it\'s complicated', err);
+      throw new Error(err);
+    });
+  },
 
-      query.catch(function(err) {
-        log.error('Inserting new relations', err);
-        throw new Error(err);
-      });
+  // TODO this destroy function does not implement a check
+  // to see if any relation is a part of any other relation.
+  'delete': function(q) {
+    var raw = q.changeset['delete'].relation;
+    var ids = _.pluck(raw, 'id');
 
-      return query;
-    },
-
-    modify: function(changeset, meta, map, transaction) {
-      var modifies = changeset.modify.relation;
-      if (!modifies) {
-        return [];
-      }
-
-      // Creates a list of modification queries.
-      var relationChanges = modifies.map(function(entity) {
-        var model = Relation.fromEntity(entity, meta);
-        return transaction(Relation.tableName)
-        .where({ id: entity.id })
-        .update(model)
-        .catch(function(err) {
-          log.error('Modify single relation', err);
-          throw new Error(err);
-        });
-      });
-
-      var ids = _.pluck(modifies, 'id');
-      var subquery = Relation.subquery(modifies, ids, map, transaction);
-      var query = Promise.all(relationChanges).then(function() {
-        return Relation.destroyDependents(transaction, ids).then(function() {
-          if (subquery.length) {
-            return Promise.all(subquery);
-          } else return
-        });
-      });
-
-      return query;
-    },
-
-    // TODO this destroy function does not implement a check
-    // to see if any relation is a part of any other relation.
-    destroy: function(changeset, meta, map, transaction) {
-      var destroys = changeset.delete.relation;
-      if (!destroys) {
-        return [];
-      }
-      var ids = _.pluck(destroys, 'id');
-      var query = transaction(Relation.tableName).whereIn('id', ids).update({
-        visible: false,
-        changeset_id: meta.id
-      }).returning('id').then(function(removed) {
-        return Relation.destroyDependents(transaction, removed).then(function() {
-          // log.info('Relations set invisible', removed.join(', '));
-        });
-      })
-      .catch(function(err) {
-        log.error('Deleting relations in delete', err);
-        throw new Error(err);
-      });
-      return query;
-    }
+    return q.transaction(Relation.tableName).whereIn('id', ids)
+    .update({ visible: false, changeset_id: q.meta.id }).returning('id')
+    .then(function(removed) {
+      return Relation.destroyDependents(removed, q.transaction);
+    })
+    .catch(function(err) {
+      log.error('Deleting relations in delete', err);
+      throw new Error(err);
+    });
+    return query;
   }
 };
 

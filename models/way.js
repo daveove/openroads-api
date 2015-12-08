@@ -14,6 +14,7 @@ var Promise = require('bluebird');
 
 var knex = require('../connection.js');
 var log = require('../services/log.js');
+var Chunk = require('../services/chunk.js');
 var Node = require('./node-model.js');
 var WayNode = require('./way-node.js');
 var WayTag = require('./way-tag.js');
@@ -130,199 +131,159 @@ var Way = {
     return ways;
   },
 
-  query: {
-    create: function(changeset, meta, map, transaction) {
-      var creates = changeset.create.way;
-      if (!creates) {
-        return [];
+  save: function(q) {
+    var actions = [];
+    var model = this;
+    ['create', 'modify', 'delete'].forEach(function(action) {
+      if (q.changeset[action].way) {
+        actions.push(action);
       }
+    });
+    return Promise.map(actions, function(action) {
+      return model[action](q);
+    })
+    .catch(function(err) {
+      log.error('Way changeset fails', err);
+      throw new Error(err);
+    });
+  },
 
-      // Create a list of models of just way creations with proper attributes.
-      var models = creates.map(function(entity) {
-        return Way.fromEntity(entity, meta);
-      });
+  create: function(q) {
 
-      // Bundle all the way insertions, bundle all the way nodes,
-      // then bundle all the tag insertions if any.
-      var query = transaction(Way.tableName).insert(models).returning('id').then(function(ids) {
+    var raw = q.changeset.create.way;
 
-        var tags = [];
-        var wayNodes = [];
-        for (var i = 0, ii = creates.length; i < ii; ++i) {
+    // Create a list of models of just way creations with proper attributes.
+    var models = raw.map(function(entity) { return Way.fromEntity(entity, q.meta); });
 
-          // Using the original change object.
-          // Contains #nd and #tag.
-          var change = creates[i];
-
-          // Map the old way ID to the new ID,
-          // so we can support relations later.
-          map.way[change.id] = ids[i];
-
-          // Set the new ID onto the changeset object.
-          change.id = ids[i];
-
-          // Safe to assume ways will have way nodes.
-          // Use the map#node mapping to get the new Node ids.
-          wayNodes.push(change.nd.map(function(wayNode, i) {
-
-            // Take the node ID from the attached nd, unless it's less than zero;
-            // In which case, use the value saved in map#node
-            var nodeId = parseInt(wayNode.ref, 10) > 0 ? wayNode.ref : map.node[wayNode.ref];
+    return Promise.map(Chunk(models), function(models) {
+      return q.transaction(Way.tableName).insert(models).returning('id');
+    }, {concurrency: 1})
+    .then(function(_ids) {
+      var ids = [].concat.apply([], _ids);
+      log.info('Remapping', ids.length, 'way IDs');
+      var wayNodes = [];
+      var tags = [];
+      raw.forEach(function(entity, i) {
+        // Map old id to new id.
+        q.map.way[entity.id] = ids[i];
+        // Update the changed id.
+        entity.id = ids[i];
+        // Take the node ID from the attached nd, unless it's less than zero;
+        // In which case, use the value saved in map#node
+        wayNodes.push(entity.nd.map(function(wayNode, i) {
+          var id = parseInt(wayNode.ref, 10) > 0 ? wayNode.ref : q.map.node[wayNode.ref];
+          return {
+            way_id: entity.id,
+            sequence_id: i,
+            node_id: id
+          };
+        }));
+        // Check if tags are present, and if so, save them.
+        if (entity.tag && entity.tag.length) {
+          tags.push(entity.tag.map(function(tag) {
             return {
-              way_id: change.id,
-              sequence_id: i,
-              node_id: nodeId
+              k: tag.k,
+              v: tag.v,
+              way_id: entity.id
             };
           }));
-
-          if (change.tag && change.tag.length) {
-            tags.push(change.tag.map(function(tag) {
-              return {
-                k: tag.k,
-                v: tag.v,
-                way_id: change.id
-              };
-            }));
-          }
         }
+      });
 
-        // The dependents array will always contain a way node insertion query.
-        // If there are way tags, it will include those too.
-        var dependents = [];
-        wayNodes = [].concat.apply([], wayNodes);
-        dependents.push(transaction(WayNode.tableName).insert(wayNodes).returning('node_id').catch(function(err) {
-          log.error('Creating way nodes in create', err);
-          throw new Error(err);
-        }));
+      wayNodes = [].concat.apply([], wayNodes);
+      return Promise.map(Chunk(wayNodes), function(wn) {
+        return q.transaction(WayNode.tableName).insert(wn);
+      }, {concurrency: 1})
+      .then(function() {
         if (tags.length) {
           tags = [].concat.apply([], tags);
-          dependents.push(transaction(WayTag.tableName).insert(tags).catch(function(err) {
-            log.error('Creating way tags in create', err);
-            throw new Error(err);
-          }));
+          return Promise.map(Chunk(tags), function(t) {
+            return q.transaction(WayTag.tableName).insert(t);
+          }, {concurrency: 1});
         }
-        return Promise.all(dependents);
-      })
-      .catch(function(err) {
-        log.error('Inserting new ways', err);
-        throw new Error(err);
-      });
-      return query;
-    },
-
-    modify: function(changeset, meta, map, transaction) {
-      var modifies = changeset.modify.way;
-      if (!modifies) {
         return [];
-      }
 
-      // Create a list of modify queries, since we can't do them all in a single query.
-      var wayChanges = modifies.map(function(entity) {
-        var model = Way.fromEntity(entity, meta);
-        var query = transaction(Way.tableName).where({ id: entity.id }).update(model).catch(function(err) {
-          log.error('Modify single way', err);
-          throw new Error(err);
-        });
-        return query;
       });
+    })
+    .catch(function(err) {
+      log.error('Inserting new ways', err);
+      throw new Error(err);
+    });
+  },
 
-      // Get all of our new tags and wayNodes.
-      // Save IDs so we can delete old tags and wayNodes.
-      var ids = [];
+  modify: function(q) {
+    var raw = q.changeset.modify.way;
+
+    return Promise.map(raw, function(entity) {
+      var model = Way.fromEntity(entity, q.meta);
+      return q.transaction(Way.tableName).where({ id: entity.id }).update(model)
+    })
+
+    // Delete old wayNodes and wayTags
+    .then(function() {
+      var ids = raw.map(function(entity) { return parseInt(entity.id, 10); });
+      return q.transaction(WayNode.tableName).whereIn('way_id', ids).del().then(function() {
+        return q.transaction(WayTag.tableName).whereIn('way_id', ids).del();
+      });
+    })
+
+    // Create new wayNodes and wayTags
+    .then(function() {
       var tags = [];
       var wayNodes = [];
-      for(var i = 0, ii = modifies.length; i < ii; ++i) {
-        var modify = modifies[i];
-        ids.push(parseInt(modify.id, 10));
-        wayNodes.push(modify.nd.map(function(wayNode, i) {
-
+      raw.forEach(function(entity) {
+        wayNodes.push(entity.nd.map(function(wayNode, i) {
           // Take the node ID from the attached nd, unless it's less than zero;
           // In which case, use the value saved in map#node
-          var nodeId = parseInt(wayNode.ref, 10) > 0 ? wayNode.ref : map.node[wayNode.ref];
+          var nodeId = parseInt(wayNode.ref, 10) > 0 ? wayNode.ref : q.map.node[wayNode.ref];
           return {
-            way_id: modify.id,
+            way_id: entity.id,
             sequence_id: i,
             node_id: nodeId
           }
         }));
-        if (modify.tag && modify.tag.length) {
-          tags.push(modify.tag.map(function(tag) {
+        if (entity.tag && entity.tag.length) {
+          tags.push(entity.tag.map(function(tag) {
             return {
               k: tag.k,
               v: tag.v,
-              way_id: modify.id
+              way_id: entity.id
             };
           }));
         }
-      }
-
-      var query = Promise.all(wayChanges).then(function() {
-
-        // Dependents is an array where each item is a delete().then.insert().
-        // It will contain way nodes for certain. It will also contain a delete for tags.
-        // If there are new tags, then it will also insert those tags.
-        var dependents = [];
-        dependents.push(transaction(WayNode.tableName).whereIn('way_id', ids).del().then(function() {
-          wayNodes = [].concat.apply([], wayNodes);
-          return transaction(WayNode.tableName).insert(wayNodes).catch(function(err) {
-            log.error('Creating way nodes in modify', err);
-            throw new Error(err);
-          });
-        })
-        .catch(function(err) {
-          log.error('Deleting way nodes in modify', err);
-          throw new Error(err);
-        }));
-
-        // Again, we always delete old way tags, even if we don't have new ones to add.
-        dependents.push(transaction(WayTag.tableName).whereIn('way_id', ids).del().then(function() {
-          if (tags.length) {
-            tags = [].concat.apply([], tags);
-            return transaction(WayTag.tableName).insert(tags).catch(function(err) {
-              log.error('Creating way tags in modify', err);
-              throw new Error(err);
-            });
-          }
-          else return
-        })
-        .catch(function(err) {
-          log.error('Deleting way tags in modify', err);
-          throw new Error(err);
-        }));
-        return Promise.all(dependents);
       });
 
-      return query;
-    },
-
-    destroy: function(changeset, meta, map, transaction) {
-      var destroys = changeset.delete.way;
-      if (!destroys) {
-        return [];
-      }
-      var ids = _.pluck(destroys, 'id');
-      var query = transaction(Way.tableName).whereIn('id', ids).update({
-        visible: false,
-        changeset_id: meta.id
-      }).returning('id').then(function(invisibleWays) {
-        return Promise.all([
-          transaction(WayTag.tableName).whereIn('way_id', invisibleWays).del(),
-          transaction(WayNode.tableName).whereIn('way_id', invisibleWays).del()
-        ]).then(function() {
-          // log.info('Ways set invisible', invisibleWays.join(', '));
-        }).catch(function(err) {
-          log.error('Deleting way nodes and tags in delete', err);
+      if (tags.length) {
+        tags = [].concat.apply([], tags);
+        // We execute this query as a side-effect on purpose;
+        // Nothing depends on it, and it can execute asynchronously of anything else.
+        q.transaction(WayTag.tableName).insert(tags).catch(function(err) {
+          log.error('Creating way tags in create', err);
           throw new Error(err);
         });
-      })
-      .catch(function(err) {
-        log.error('Deleting ways in delete', err);
-        throw new Error(err);
-      });
-      return query;
-    }
+      }
+      wayNodes = [].concat.apply([], wayNodes);
+      return q.transaction(WayNode.tableName).insert(wayNodes);
+    })
+    .catch(function(err) {
+      log.error('Modifying ways', err);
+      throw new Error(err);
+    });
+  },
+
+  'delete': function(q) {
+    var ids = _.pluck(q.changeset['delete'].way, 'id');
+    return q.transaction(Way.tableName).whereIn('id', ids)
+    .update({ visible: false, changeset_id: q.meta.id }).returning('id')
+    .then(function(invisibleWays) {
+      q.transaction(WayTag.tableName).whereIn('way_id', invisibleWays).del();
+      return q.transaction(WayNode.tableName).whereIn('way_id', invisibleWays).del()
+    })
+    .catch(function(err) {
+      log.error('Deleting ways in delete', err);
+      throw new Error(err);
+    });
   }
 };
 
 module.exports = Way;
-

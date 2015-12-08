@@ -1,17 +1,16 @@
 'use strict';
 
 var getAdminBoundary = require('../../services/admin-boundary.js');
-var getSubregionFeatures = require('../../services/admin-subregions.js')
-  .getFeatures;
+var getSubregionFeatures = require('../../services/admin-subregions.js').getFeatures;
 var queryPolygon = require('../../services/query-polygon.js');
 
-
-describe('subregions endpoint', function() {
+describe('admin subregions endpoint', function() {
+  this.slow(5000);
 
   it('responds with the right schema for the whole country', function(done) {
     server.injectThen({
       method: 'GET',
-      url: '/subregions'
+      url: '/admin/subregions'
     })
     .then(function (resp) {
       var obj = JSON.parse(resp.payload);
@@ -24,11 +23,11 @@ describe('subregions endpoint', function() {
   it('responds with the right schema for a particular region', function(done) {
     server.injectThen({
       method: 'GET',
-      url: '/subregions/7150000000'
+      url: '/admin/13000000000/subregions'
     })
     .then(function (resp) {
       var obj = JSON.parse(resp.payload);
-      obj.should.have.keys('meta', 'adminAreas');
+      obj.should.have.keys('id', 'name', 'type', 'NAME_0', 'adminAreas');
       done();
     })
     .catch(done);
@@ -37,13 +36,13 @@ describe('subregions endpoint', function() {
   it('yields provinces for a region', function(done) {
     server.injectThen({
       method: 'GET',
-      url: '/subregions/7000000000'
+      url: '/admin/13000000000/subregions'
     })
     .then(function (resp) {
       var obj = JSON.parse(resp.payload);
-      obj.meta.id.should.equal(7000000000);
-      obj.meta.type.should.equal(1);
-      obj.adminAreas.should.have.length(4);
+      obj.id.should.equal(13000000000);
+      obj.type.should.equal(1);
+      obj.adminAreas.should.have.length(10);
       done();
     })
     .catch(done);
@@ -52,27 +51,89 @@ describe('subregions endpoint', function() {
   it('yields municipalities for a province', function(done) {
     server.injectThen({
       method: 'GET',
-      url: '/subregions/7150000000'
+      url: '/admin/13590000000/subregions'
     })
     .then(function (resp) {
       var obj = JSON.parse(resp.payload);
-      obj.meta.id.should.equal(7150000000);
-      obj.adminAreas.should.have.length(48);
+      obj.id.should.equal(13590000000);
+      obj.type.should.equal(2);
+      obj.adminAreas.should.have.length(23);
       done();
     })
     .catch(done);
   });
 
   it('yields barangays for a municipality', function(done) {
+    // this also tests getAdminBoundary()
     server.injectThen({
       method: 'GET',
-      url: '/subregions/7150210000'
+      url: '/admin/13591204000/subregions'
     })
     .then(function (resp) {
       var obj = JSON.parse(resp.payload);
-      obj.meta.id.should.equal(7150210000);
-      obj.meta.name.should.equal('Albuquerque');
-      obj.adminAreas.should.have.length(11);
+      obj.id.should.equal(13591204000);
+      obj.name.should.equal('Dumaran');
+      obj.type.should.equal(3);
+      obj.adminAreas.should.have.length(16);
+      done();
+    })
+    .catch(done);
+  });
+
+  it('responds with code 400 for region subregion boundaries', function(done) {
+    server.injectThen({
+      method: 'GET',
+      url: '/admin/13000000000/subregions?boundary=true'
+    })
+    .then(function (resp) {
+      var obj = JSON.parse(resp.payload);
+      obj.statusCode.should.equal(400);
+      obj.message.should.equal('Request region is too large.');
+      done();
+    })
+    .catch(done);
+  });
+
+  it('responds with code 400 for province subregion boundaries', function(done) {
+    server.injectThen({
+      method: 'GET',
+      url: '/admin/13590000000/subregions?boundary=true'
+    })
+    .then(function (resp) {
+      var obj = JSON.parse(resp.payload);
+      obj.statusCode.should.equal(400);
+      obj.message.should.equal('Request region is too large.');
+      done();
+    })
+    .catch(done);
+  });
+
+  it('responds with municipality subregion boundaries', function(done) {
+    server.injectThen({
+      method: 'GET',
+      url: '/admin/13591204000/subregions?boundary=true'
+    })
+    .then(function (resp) {
+      var obj = JSON.parse(resp.payload);
+      obj.should.have.keys('type', 'properties', 'features');
+      obj.properties.id.should.equal(13591204000);
+      obj.properties.name.should.equal('Dumaran');
+      obj.properties.type.should.equal(3);
+      obj.features.should.have.length(16);
+      done();
+    })
+    .catch(done);
+  });
+
+  it('responds no subregion boundaries for barangays', function(done) {
+    server.injectThen({
+      method: 'GET',
+      url: '/admin/13591204002/subregions?boundary=true'
+    })
+    .then(function (resp) {
+      var obj = JSON.parse(resp.payload);
+      obj.should.have.keys('type', 'properties', 'features');
+      obj.features.should.have.length(0);
       done();
     })
     .catch(done);
@@ -80,27 +141,16 @@ describe('subregions endpoint', function() {
 });
 
 describe('admin endpoint', function() {
+  this.slow(5000);
 
   it('responds with the right schema for a municipality', function(done) {
     server.injectThen({
       method: 'GET',
-      url: '/admin/7150216000'
+      url: '/admin/13591204000'
     })
     .then(function (resp) {
       var obj = JSON.parse(resp.payload);
-      obj.should.have.keys('roads', 'subregions');
-      done();
-    })
-    .catch(done);
-  });
-
-  it('gets the barangays for a municipality', function (done) {
-    getAdminBoundary(7150216000)
-    .then(function(admin) {
-      return getSubregionFeatures(3, admin.id, admin);
-    })
-    .then(function (subregions) {
-      subregions.features.should.have.length(15);
+      obj.should.have.keys('id', 'name', 'type', 'NAME_0', 'NAME_1', 'NAME_2', 'ID_1_OR', 'ID_2_OR');
       done();
     })
     .catch(done);
@@ -109,14 +159,14 @@ describe('admin endpoint', function() {
   it('fetches a boundary for a given municipality id', function(done) {
     getAdminBoundary(7150216000)
     .then(function (boundary) {
-      boundary.properties.NAME_3.should.equal('Batuan');
+      boundary.name.should.equal('Batuan');
       boundary.geometry.coordinates[0].should.have.length(311);
       done();
     })
     .catch(done);
   });
 
-  it('queries a polygon, clipping roads to within the poly', function(done) {
+  it.skip('queries a polygon, clipping roads to within the poly', function(done) {
     var poly = {
       'type': 'Feature',
       'properties': {},
@@ -134,12 +184,125 @@ describe('admin endpoint', function() {
       }
     };
 
-    // jshint maxlen: false
-    var expected = '{"type":"FeatureCollection","properties":{},"features":[{"type":"Feature","geometry":{"type":"LineString","coordinates":[[124.7463826,9.5306962],[124.7589139,9.5306539],[124.7589139,9.537891]]},"properties":{"or_condition":"bad","highway":"motorway"}},{"type":"Feature","geometry":{"type":"LineString","coordinates":[[124.746447,9.5298921],[124.7594504,9.5298286],[124.7594718,9.5372139]]},"properties":{"or_condition":"good","highway":"motorway"}},{"type":"Feature","geometry":{"type":"LineString","coordinates":[[124.7461466,9.5265485],[124.7493867,9.5280087],[124.751275,9.5264427],[124.7595147,9.5264427]]},"properties":{"name":"shouldbeclipped","or_condition":"fair","highway":"motorway"}}]}';
-
     queryPolygon(poly)
     .then(function (result) {
-      JSON.stringify(result).should.equal(expected);
+      result.should.have.property('features');
+      result.features.length.should.be.greaterThan(0);
+      var isclipped = result.features.some(function(feature) {
+        return feature.properties.name &&
+          feature.properties.name === 'shouldbeclipped';
+      });
+      isclipped.should.equal(true);
+      done();
+    })
+    .catch(done);
+  });
+
+  it('responds with code 400 for region road network', function(done) {
+    server.injectThen({
+      method: 'GET',
+      url: '/admin/13000000000?roadNetwork=true'
+    })
+    .then(function (resp) {
+      var obj = JSON.parse(resp.payload);
+      obj.statusCode.should.equal(400);
+      obj.message.should.equal('Request area is greater than maximum request area.');
+      done();
+    })
+    .catch(done);
+  });
+
+  it('responds with code 400 for province road network', function(done) {
+    server.injectThen({
+      method: 'GET',
+      url: '/admin/13590000000?roadNetwork=true'
+    })
+    .then(function (resp) {
+      var obj = JSON.parse(resp.payload);
+      obj.statusCode.should.equal(400);
+      obj.message.should.equal('Request area is greater than maximum request area.');
+      done();
+    })
+    .catch(done);
+  });
+
+  it.skip('responds with barangays road network', function(done) {
+    server.injectThen({
+      method: 'GET',
+      url: '/admin/13591204002?roadNetwork=true'
+    })
+    .then(function (resp) {
+      var obj = JSON.parse(resp.payload);
+      obj.should.have.keys('type', 'properties', 'features');
+      obj.properties.id.should.equal(13591204002);
+      obj.properties.name.should.equal('Bohol');
+      obj.properties.type.should.equal(4);
+      obj.features.should.have.length(1);
+      obj.features[0].properties.should.have.keys('highway', 'or_rdclass', 'source');
+      done();
+    })
+    .catch(done);
+  });
+
+  it('responds with region boundaries', function(done) {
+    server.injectThen({
+      method: 'GET',
+      url: '/admin/13000000000?boundary=true'
+    })
+    .then(function (resp) {
+      var obj = JSON.parse(resp.payload);
+      obj.should.have.keys('type', 'properties', 'geometry');
+      obj.properties.id.should.equal(13000000000);
+      obj.properties.name.should.equal('Region IV-B (Mimaropa)');
+      obj.properties.type.should.equal(1);
+      done();
+    })
+    .catch(done);
+  });
+
+  it('responds with province boundaries', function(done) {
+    server.injectThen({
+      method: 'GET',
+      url: '/admin/13590000000?boundary=true'
+    })
+    .then(function (resp) {
+      var obj = JSON.parse(resp.payload);
+      obj.properties.id.should.equal(13590000000);
+      obj.properties.name.should.equal('Palawan');
+      obj.properties.type.should.equal(2);
+      obj.should.have.keys('type', 'properties', 'geometry');
+      done();
+    })
+    .catch(done);
+  });
+
+  it('responds with municipality boundaries', function(done) {
+    server.injectThen({
+      method: 'GET',
+      url: '/admin/13591204000?boundary=true'
+    })
+    .then(function (resp) {
+      var obj = JSON.parse(resp.payload);
+      obj.should.have.keys('type', 'properties', 'geometry');
+      obj.properties.id.should.equal(13591204000);
+      obj.properties.name.should.equal('Dumaran');
+      obj.properties.type.should.equal(3);
+      done();
+    })
+    .catch(done);
+  });
+
+  it('responds with barangays boundaries', function(done) {
+    server.injectThen({
+      method: 'GET',
+      url: '/admin/13591204002?boundary=true'
+    })
+    .then(function (resp) {
+      var obj = JSON.parse(resp.payload);
+      obj.properties.id.should.equal(13591204002);
+      obj.properties.name.should.equal('Bohol');
+      obj.properties.type.should.equal(4);
+      obj.should.have.keys('type', 'properties', 'geometry');
       done();
     })
     .catch(done);
@@ -148,14 +311,16 @@ describe('admin endpoint', function() {
 });
 
 describe('admin search endpoint', function() {
+  this.slow(5000);
+
   function sortIDs(a, b) {
     var idA = parseInt(a.id);
     var idB = parseInt(b.id);
-    return (idA < idB) ? -1 : (idA > idB) ? 1 : 0; 
+    return (idA < idB) ? -1 : (idA > idB) ? 1 : 0;
   }
 
   it('responds with the right results for term sayan', function(done) {
-    var expected = [{"id":"3771538003","name":"Apsayan","type":4},{"id":"1350635003","name":"Bacsayan","type":4},{"id":"1390751003","name":"Bacsayan","type":4},{"id":"17420846003","name":"Bansayan","type":4},{"id":"17420820003","name":"Bansayan","type":4},{"id":"17420844025","name":"Bansayan","type":4},{"id":"4120174012","name":"Calansayan","type":4},{"id":"7691413004","name":"Cansayang","type":4},{"id":"2180316013","name":"Capissayan Norte","type":4},{"id":"2180316014","name":"Capissayan Sur","type":4}];
+    var expected = [{"id":3771538003,"name":"Apsayan","type":4},{"id":1350635003,"name":"Bacsayan","type":4},{"id":1390751003,"name":"Bacsayan","type":4},{"id":17420846003,"name":"Bansayan","type":4},{"id":17420820003,"name":"Bansayan","type":4},{"id":17420844025,"name":"Bansayan","type":4},{"id":4120174012,"name":"Calansayan","type":4},{"id":7691413004,"name":"Cansayang","type":4},{"id":2180316013,"name":"Capissayan Norte","type":4},{"id":2180316014,"name":"Capissayan Sur","type":4}];
 
     server.injectThen({
       method: 'GET',
@@ -169,7 +334,7 @@ describe('admin search endpoint', function() {
   });
 
   it('responds with the right results for sayan- case insensitive', function(done) {
-    var expected = [{"id":"3771538003","name":"Apsayan","type":4},{"id":"1350635003","name":"Bacsayan","type":4},{"id":"1390751003","name":"Bacsayan","type":4},{"id":"17420846003","name":"Bansayan","type":4},{"id":"17420820003","name":"Bansayan","type":4},{"id":"17420844025","name":"Bansayan","type":4},{"id":"4120174012","name":"Calansayan","type":4},{"id":"7691413004","name":"Cansayang","type":4},{"id":"2180316013","name":"Capissayan Norte","type":4},{"id":"2180316014","name":"Capissayan Sur","type":4}];
+    var expected = [{"id":3771538003,"name":"Apsayan","type":4},{"id":1350635003,"name":"Bacsayan","type":4},{"id":1390751003,"name":"Bacsayan","type":4},{"id":17420846003,"name":"Bansayan","type":4},{"id":17420820003,"name":"Bansayan","type":4},{"id":17420844025,"name":"Bansayan","type":4},{"id":4120174012,"name":"Calansayan","type":4},{"id":7691413004,"name":"Cansayang","type":4},{"id":2180316013,"name":"Capissayan Norte","type":4},{"id":2180316014,"name":"Capissayan Sur","type":4}];
 
     server.injectThen({
       method: 'GET',
