@@ -10,8 +10,7 @@ var ratio = require('../services/ratio.js');
  *
  * `data` is as yielded by ../services/query-ways.js
  */
-module.exports = function toGeoJSON(data, geometryType) {
-  geometryType = geometryType || 'LineString';
+module.exports = function toGeoJSON(data) {
 
   var idToNode = {}; // TODO:this should be a real hashmap
   data.nodes.forEach(function (n) { idToNode[n.id] = n; });
@@ -30,8 +29,8 @@ module.exports = function toGeoJSON(data, geometryType) {
       type: 'Feature',
       properties: properties,
       geometry: {
-        type: geometryType,
-        coordinates: geometryType == 'Polygon' ? [nodeCoordinates] : nodeCoordinates
+        type: 'LineString',
+        coordinates: nodeCoordinates
       }
     };
   });
