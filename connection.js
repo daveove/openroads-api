@@ -1,8 +1,4 @@
-// TODO: change default to 'production' once we're ready to switch over to that
-// db
-var environment = process.env.OR_ENV || 'old-production';
-
-var connection = process.env.DATABASE_URL || require('./local').connection[environment];
+var connection = process.env.DATABASE_URL || require('./local').connection.url;
 var knex = require('knex')({
   client: 'pg',
   connection: connection,

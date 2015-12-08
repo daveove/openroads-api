@@ -8,7 +8,6 @@ RUN yum install -y postgis
 
 EXPOSE 5432
 
-ADD admin_boundaries.csv /admin_boundaries.csv
 COPY docker-start.sh /start.sh
 COPY script /install/script
 

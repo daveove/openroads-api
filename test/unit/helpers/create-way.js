@@ -43,6 +43,15 @@ newWay.prototype.nodes = function(x) {
   else return this.entity.nd;
 }
 
+newWay.prototype.newNodes = function(ii) {
+  var nd = [];
+  for(var i = 0; i < ii; ++i ) {
+    nd.push({ ref: -(ii+1) });
+  }
+  this.entity.nd = nd;
+  return this;
+}
+
 newWay.prototype.get = function() {
   return this.entity;
 }

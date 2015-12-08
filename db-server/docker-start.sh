@@ -29,11 +29,10 @@ if [ ! "$(ls -A $DATADIR)" ]; then
 	# Configure the api06_test database as the OSM user.
 	su postgres sh -lc "psql -U osm api06_test" <<-EOSQL
 		\i /install/script/apidb_0.6.sql
+		\i /install/script/apidb_0.6_osmosis_xid_indexing.sql
 		\i /install/script/apidb_0.6_admin_boundaries.sql
 	EOSQL
 
-        # Add admin boundaries
-        su postgres sh -c "cat admin_boundaries.csv | psql -U osm api06_test -c "'"'"copy admin_boundaries FROM stdin DELIMITER ',' CSV HEADER;"'"'" "
 	# Stop the database.
 	su postgres sh -lc "pg_ctl -w stop"
 fi

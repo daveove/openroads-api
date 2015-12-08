@@ -1,10 +1,8 @@
 'use strict';
-var libxml = require('libxmljs');
 
 // to-fix endpoint tests.
 
-describe.skip('to-fix endpoints', function() {
-  /*
+describe('to-fix endpoints', function() {
 
   it('returns a single node from /xml/node/:id', function (done) {
     var file = require.resolve('./fixtures/node-response.xml');
@@ -41,15 +39,16 @@ describe.skip('to-fix endpoints', function() {
     .then(function (res) {
       res.statusCode.should.eql(200);
 
-      var payload = libxml.parseXmlString(res.payload);
-      expected = libxml.parseXmlString(expected);
-      expected.get('//way').childNodes().length
-        .should.eql(payload.get('//way').childNodes().length);
+      // strip timestamps because differing test machine timezones plus
+      // our timezone-agnostic db schema makes tests fail.
+      var timestampAttr = /timestamp\="[^"]*"/g;
+      res.payload = res.payload.replace(timestampAttr, '');
+      expected = expected.replace(timestampAttr, '');
 
+      res.payload.should.eql(expected);
       done();
     })
     .catch(done);
   });
 
-  */
 });
