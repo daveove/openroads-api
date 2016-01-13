@@ -6,6 +6,7 @@ var QuadTile = require('../services/quad-tile');
 var queryWays = require('./query-ways');
 var chunk = require('./chunk');
 var log = require('./log');
+var performance = require('./performance');
 
 // Helper function to flatten nested loops
 // and filter out any empties.
@@ -13,14 +14,6 @@ function flatten (nested) {
   return _.flatten(nested.filter(function (arr) {
     return arr.length;
   }));
-}
-
-function getTime (last, op) {
-  if (last === null) {
-    return null;
-  }
-  log.info(op, new Date() - last, 'ms');
-  return new Date();
 }
 
 function combineChunkedWays (chunks) {
@@ -66,19 +59,19 @@ module.exports = function queryBbox(knex, bbox) {
   return Promise.map(chunkedTiles, queryNodes, {concurrency: 1})
     .then(flatten)
     .then(function (nodes) {
-      last = getTime(last, 'query-bbox#queryNodes');
+      last = performance.log(last, 'query-bbox#queryNodes');
       return Promise.map(chunk(_.pluck(nodes, 'id')), queryWayNodes, {concurrency: 1})
     })
     .then(flatten)
     .then(function (wayIds) {
-      last = getTime(last, 'query-bbox#queryWayNodes');
+      last = performance.log(last, 'query-bbox#queryWayNodes');
       wayIds = _.uniq(_.pluck(wayIds, 'way_id'));
       return Promise.map(chunk(wayIds, 500), function (wayIds) {
         return queryWays(knex, wayIds);
       }, {concurrency: 1});
     })
     .then(function (chunks) {
-      last = getTime(last, 'query-bbox#queryWays');
+      last = performance.log(last, 'query-bbox#queryWays');
       if (chunks.length === 1) {
         return chunks[0];
       }

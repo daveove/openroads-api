@@ -1,11 +1,12 @@
 'use strict';
 
-var knex = require('../connection.js');
+var knex = require('../connection');
 var extent = require('turf-extent');
-var clip = require('./clip.js');
-var toGeoJSON = require('./osm-data-to-geojson.js');
-var queryBbox = require('./query-bbox.js');
-var BoundingBox = require('./bounding-box.js');
+var clip = require('./clip');
+var toGeoJSON = require('./osm-data-to-geojson');
+var queryBbox = require('./query-bbox');
+var BoundingBox = require('./bounding-box');
+var performance = require('./performance');
 
 // Query the given GeoJSON Polygon Feature, returning a promise to be
 // fulfilled with a GeoJSON FeatureCollection representing the (clipped)
@@ -15,9 +16,11 @@ module.exports = function(boundary) {
 
   return queryBbox(knex, bbox)
   .then(function (result) {
+    var last = new Date();
     var roads = toGeoJSON(result);
     roads.features = clip(roads.features, boundary);
     roads.properties = boundary.properties;
+    last = performance.log(last, 'query-polygon geojson parsing');
     return roads;
   });
 };

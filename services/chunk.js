@@ -14,6 +14,6 @@ module.exports = function(array, interval) {
         end = start + interval > count ? count : start + interval;
       return array.slice(start, end);
     });
-  log.info(count, 'entities divided into', chunks.length, 'chunks');
+  log.info(count + ' entities divided into ' + chunks.length + ' chunks');
   return chunks;
 };
