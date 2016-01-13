@@ -87,7 +87,16 @@ module.exports = function queryBbox(knex, bbox) {
     })
     .catch(function (err) {
       if (err.message === noNodes) {
-        return {};
+        return {
+          ways: [],
+          waynodes: [],
+          members: [],
+          nodes: [],
+          waytags: [],
+          nodetags: [],
+          relations: [],
+          relationtags: []
+        };
       }
       else {
         log.error(err);

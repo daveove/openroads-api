@@ -4,10 +4,10 @@ var BoundingBox = require('../../services/bounding-box');
 var queryBbox = require('../../services/query-bbox');
 
 describe('bounding box query service', function () {
-  it('does not fail with an empty query', function (done) {
+  it('returns a default object structure on empty query', function (done) {
     var bbox = new BoundingBox.fromCoordinates([0.1, 0.1, 0.12, 0.12]);
     queryBbox(knex, bbox).then(function (results) {
-      should(results).eql({});
+      results.should.have.property('relationtags', []);
       done();
     });
   });

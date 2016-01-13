@@ -14,9 +14,9 @@ module.exports = function toGeoJSON(data, geometryType) {
   geometryType = geometryType || 'LineString';
 
   var idToNode = {}; // TODO:this should be a real hashmap
-  data.nodes.forEach(function (n) { idToNode[n.id] = n; });
+  data.nodes && data.nodes.forEach(function (n) { idToNode[n.id] = n; });
 
-  var wayFeatures = data.ways.map(function (way) {
+  var wayFeatures = !data.ways ? [] : data.ways.map(function (way) {
     var nodeCoordinates = way.nodes.map(function (waynode) {
       var node = idToNode[waynode.node_id];
       return [node.longitude / ratio, node.latitude / ratio];
