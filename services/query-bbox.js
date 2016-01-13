@@ -56,10 +56,17 @@ module.exports = function queryBbox(knex, bbox) {
     last = new Date();
   }
 
+  var noNodes = 'No nodes in bounding box';
+
   return Promise.map(chunkedTiles, queryNodes, {concurrency: 1})
     .then(flatten)
     .then(function (nodes) {
       last = performance.log(last, 'query-bbox#queryNodes');
+
+      // If we didn't find any nodes, ditch this promise chain.
+      if (!nodes.length) {
+        throw new Error(noNodes);
+      }
       return Promise.map(chunk(_.pluck(nodes, 'id')), queryWayNodes, {concurrency: 1})
     })
     .then(flatten)
@@ -79,6 +86,12 @@ module.exports = function queryBbox(knex, bbox) {
       return combineChunkedWays(chunks);
     })
     .catch(function (err) {
-      log.error(err);
+      if (err.message === noNodes) {
+        return {};
+      }
+      else {
+        log.error(err);
+        return false;
+      }
     });
 };
