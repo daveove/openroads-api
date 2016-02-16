@@ -4,7 +4,7 @@
 
 describe('to-fix endpoints', function() {
 
-  it('returns a single node from /xml/node/:id', function (done) {
+  it.skip('returns a single node from /xml/node/:id', function (done) {
     var file = require.resolve('./fixtures/node-response.xml');
     var expected = require('fs').readFileSync(file, 'utf-8');
 
@@ -28,7 +28,7 @@ describe('to-fix endpoints', function() {
   });
 
 
-  it('returns a full way from /xml/way/:id/full', function (done) {
+  it.skip('returns a full way from /xml/way/:id/full', function (done) {
     var file = require.resolve('./fixtures/way-full-response.xml');
     var expected = require('fs').readFileSync(file, 'utf-8');
 

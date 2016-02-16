@@ -53,7 +53,7 @@ describe('map endpoint', function () {
   });
 
 
-  it('returns the complete way when part lies outside bbox',
+  it.skip('returns the complete way when part lies outside bbox',
   function (done) {
     var file = './fixtures/bbox-response-oneWay.xml';
     var expected = fs.readFileSync(require.resolve(file), 'utf-8');
@@ -79,7 +79,7 @@ describe('map endpoint', function () {
 });
 
 describe('geojson map endpoint', function() {
-  it('returns the complete way when part lies outside bbox',
+  it.skip('returns the complete way when part lies outside bbox',
   function (done) {
     var bbox = '123.81042480468751,9.584500864717155,123.81591796875,9.58991730708743';
     var file = './fixtures/bbox-response-oneWay.json';

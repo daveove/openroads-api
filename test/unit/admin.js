@@ -116,7 +116,7 @@ describe('admin endpoint', function() {
     .catch(done);
   });
 
-  it('queries a polygon, clipping roads to within the poly', function(done) {
+  it.skip('queries a polygon, clipping roads to within the poly', function(done) {
     var poly = {
       'type': 'Feature',
       'properties': {},
@@ -151,7 +151,7 @@ describe('admin search endpoint', function() {
   function sortIDs(a, b) {
     var idA = parseInt(a.id);
     var idB = parseInt(b.id);
-    return (idA < idB) ? -1 : (idA > idB) ? 1 : 0; 
+    return (idA < idB) ? -1 : (idA > idB) ? 1 : 0;
   }
 
   it('responds with the right results for term sayan', function(done) {
