@@ -283,7 +283,9 @@ var Way = {
       log.error('Deleting ways in delete', err);
       throw new Error(err);
     });
-  }
+  },
+
+  requiredTags: ['or_class', 'or_rdclass', 'or_condition']
 };
 
 module.exports = Way;

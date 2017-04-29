@@ -7,6 +7,7 @@ var Promise = require('bluebird');
 var knex = require('../connection.js');
 var BoundingBox = require('../services/bounding-box.js');
 var log = require('../services/log.js');
+var performance = require('../services/performance');
 
 var models = {
   node: require('../models/node-model.js'),
@@ -51,7 +52,7 @@ function upload(req, res) {
 
 function _upload(meta, changeset) {
     // Useful to keep track of how long stuff takes.
-    var time = new Date();
+    var last = new Date();
     log.info('Starting changeset transaction');
     return knex.transaction(function(transaction) {
 
@@ -69,20 +70,17 @@ function _upload(meta, changeset) {
 
       return models.node.save(queryData)
       .then(function() {
-        log.info('Nodes transaction completed', (new Date() - time) / 1000, 'seconds');
-        time = new Date();
+        last = performance.log(last, 'models/node-model#save');
         return models.way.save(queryData);
       })
       .then(function() {
-        log.info('Ways transaction completed', (new Date() - time) / 1000, 'seconds');
-        time = new Date();
+        last = performance.log(last, 'models/way#save');
         return models.relation.save(queryData);
       })
       .then(function(saved) {
-        log.info('Relations transaction completed', (new Date() - time) / 1000, 'seconds');
-        time = new Date();
+        last = performance.log(last, 'models/relation#save');
         var newMeta = updateChangeset(meta, changeset);
-        log.info('New changeset updated', (new Date() - time) / 1000, 'seconds');
+        last = performance.log(last, 'updated changeset');
         knex('changesets')
           .where('id', meta.id)
           .update(newMeta);
