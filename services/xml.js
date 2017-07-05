@@ -114,8 +114,8 @@ var xml = {
         version: node.version,
         changeset: node.changeset_id,
         timestamp: node.timestamp,
-        user: 'DevelopmentSeed',
-        uid: 1,
+        user: node.user,
+        uid: node.uid,
         lat: node.latitude / RATIO,
         lon: node.longitude / RATIO
       });
@@ -140,8 +140,8 @@ var xml = {
         version: way.version,
         changeset: way.changeset_id,
         timestamp: way.timestamp,
-        user: 'DevelopmentSeed',
-        uid: 1
+        user: way.user,
+        uid: way.uid
       });
 
       // Use the sequence ID to make sure nodes are ordered correctly.

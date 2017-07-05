@@ -48,7 +48,11 @@ module.exports = {
     }
 
     Promise.all([
-      knex('current_nodes').where('id', nodeId),
+      knex.select('current_nodes.*', 'users.display_name as user', 'users.id as uid')
+        .from('current_nodes')
+        .leftJoin('changesets', 'current_nodes.changeset_id', 'changesets.id')
+        .leftJoin('users', 'changesets.user_id', 'users.id')
+        .where('current_nodes.id', nodeId),
       knex('current_node_tags').where('node_id', nodeId)
     ])
     .then(function (result) {
